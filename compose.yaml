@@ -1,0 +1,13 @@
+services:
+  server:
+    build:
+      context: .
+    environment:
+      - API_TOKEN=${API_TOKEN}
+      - BASE_URL=https://sc-trade.tools/api
+      - HOST=0.0.0.0
+      - PORT=9020
+      - NODE_ENV=production
+    ports:
+      - 9020:9020
+    restart: unless-stopped
