@@ -1,6 +1,7 @@
 import express from "express";
 import ky from "ky";
 import { readFile, writeFile } from "node:fs/promises";
+import { join } from "node:path";
 import { register } from "prom-client";
 import { env } from "./env.js";
 import { registerLeaderboardMetrics } from "./metrics/leaderboard.js";
@@ -50,7 +51,10 @@ export interface CrowdSourceTransaction {
 const transactions: CrowdSourceTransaction[] = [];
 
 try {
-  const transactionsCsvContent = await readFile("transactions.csv", "utf-8");
+  const transactionsCsvContent = await readFile(
+    join("data", "transactions.csv"),
+    "utf-8"
+  );
 
   transactions.push(
     ...transactionsCsvContent.split("\n").map((line) => {
@@ -164,7 +168,7 @@ async function fetchTransactions() {
   } while (response.last === false);
 
   await writeFile(
-    "transactions.csv",
+    join("data", "transactions.csv"),
     transactions
       .map(
         ({
