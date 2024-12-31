@@ -15,7 +15,7 @@ importers:
         specifier: 4.21.2
         version: 4.21.2
       ky:
-        specifier: ~1.7.4
+        specifier: 1.7.4
         version: 1.7.4
       prom-client:
         specifier: 15.1.3
