@@ -125,7 +125,210 @@ export function registerShopsMetrics(options: ShopsMetricOptions): Gauge[] {
     },
   });
 
-  metrics.push(commodityTotalBuyPriceMetric, commodityTotalSellPriceMetric);
+  const commodityTotalBuyQuantityMetric = new Gauge({
+    name: "sc_trading_tools_commodity_buy_quantity_scu_total",
+    help: "Commodity total buy quantity at shop",
+    labelNames: [
+      "commodity",
+      "system",
+      "location",
+      "locationType",
+      // "shop",
+      // "securityLevel",
+      // "isHidden",
+    ],
+    collect() {
+      Object.values(
+        transactions
+          .filter((t) => t.transaction === "BUYS")
+          .reduce((acc, t) => {
+            const key = t.commodity + t.location;
+            const known = acc[key] ?? null;
+            if (!known || known.timestamp < t.timestamp) {
+              acc[key] = t;
+            }
+            return acc;
+          }, {} as Record<string, CrowdSourceTransaction>)
+      )
+        .map((t) => {
+          const commodity =
+            items.find((i) => i.toLowerCase() === t.commodity.toLowerCase()) ??
+            t.commodity;
+          const location = locations.find(
+            (l) => l.name.toLowerCase() === t.location.toLowerCase()
+          ) ?? { name: t.location, type: "unknown" };
+          const system = location.name.split(" > ")[0];
+
+          return [
+            commodity,
+            system,
+            location.name,
+            location.type,
+            t.quantity,
+          ] as const;
+        })
+        .forEach(([commodity, system, location, locationType, quantity]) => {
+          this.labels(commodity, system, location, locationType).set(quantity);
+        });
+    },
+  });
+
+  const commodityTotalSellQuantityMetric = new Gauge({
+    name: "sc_trading_tools_commodity_sell_quantity_scu_total",
+    help: "Commodity total sell quantity at shop",
+    labelNames: [
+      "commodity",
+      "system",
+      "location",
+      "locationType",
+      // "shop",
+      // "securityLevel",
+      // "isHidden",
+    ],
+    collect() {
+      Object.values(
+        transactions
+          .filter((t) => t.transaction === "SELLS")
+          .reduce((acc, t) => {
+            const key = t.commodity + t.location;
+            const known = acc[key] ?? null;
+            if (!known || known.timestamp < t.timestamp) {
+              acc[key] = t;
+            }
+            return acc;
+          }, {} as Record<string, CrowdSourceTransaction>)
+      )
+        .map((t) => {
+          const commodity =
+            items.find((i) => i.toLowerCase() === t.commodity.toLowerCase()) ??
+            t.commodity;
+          const location = locations.find(
+            (l) => l.name.toLowerCase() === t.location.toLowerCase()
+          ) ?? { name: t.location, type: "unknown" };
+          const system = location.name.split(" > ")[0];
+
+          return [
+            commodity,
+            system,
+            location.name,
+            location.type,
+            t.quantity,
+          ] as const;
+        })
+        .forEach(([commodity, system, location, locationType, quantity]) => {
+          this.labels(commodity, system, location, locationType).set(quantity);
+        });
+    },
+  });
+
+  const commodityTotalBuySaturationMetric = new Gauge({
+    name: "sc_trading_tools_commodity_buy_saturation_scu_total",
+    help: "Commodity total buy saturation at shop",
+    labelNames: [
+      "commodity",
+      "system",
+      "location",
+      "locationType",
+      // "shop",
+      // "securityLevel",
+      // "isHidden",
+    ],
+    collect() {
+      Object.values(
+        transactions
+          .filter((t) => t.transaction === "BUYS")
+          .reduce((acc, t) => {
+            const key = t.commodity + t.location;
+            const known = acc[key] ?? null;
+            if (!known || known.timestamp < t.timestamp) {
+              acc[key] = t;
+            }
+            return acc;
+          }, {} as Record<string, CrowdSourceTransaction>)
+      )
+        .map((t) => {
+          const commodity =
+            items.find((i) => i.toLowerCase() === t.commodity.toLowerCase()) ??
+            t.commodity;
+          const location = locations.find(
+            (l) => l.name.toLowerCase() === t.location.toLowerCase()
+          ) ?? { name: t.location, type: "unknown" };
+          const system = location.name.split(" > ")[0];
+
+          return [
+            commodity,
+            system,
+            location.name,
+            location.type,
+            t.saturation,
+          ] as const;
+        })
+        .forEach(([commodity, system, location, locationType, saturation]) => {
+          this.labels(commodity, system, location, locationType).set(
+            saturation
+          );
+        });
+    },
+  });
+
+  const commodityTotalSellSaturationMetric = new Gauge({
+    name: "sc_trading_tools_commodity_sell_saturation_scu_total",
+    help: "Commodity total sell saturation at shop",
+    labelNames: [
+      "commodity",
+      "system",
+      "location",
+      "locationType",
+      // "shop",
+      // "securityLevel",
+      // "isHidden",
+    ],
+    collect() {
+      Object.values(
+        transactions
+          .filter((t) => t.transaction === "SELLS")
+          .reduce((acc, t) => {
+            const key = t.commodity + t.location;
+            const known = acc[key] ?? null;
+            if (!known || known.timestamp < t.timestamp) {
+              acc[key] = t;
+            }
+            return acc;
+          }, {} as Record<string, CrowdSourceTransaction>)
+      )
+        .map((t) => {
+          const commodity =
+            items.find((i) => i.toLowerCase() === t.commodity.toLowerCase()) ??
+            t.commodity;
+          const location = locations.find(
+            (l) => l.name.toLowerCase() === t.location.toLowerCase()
+          ) ?? { name: t.location, type: "unknown" };
+          const system = location.name.split(" > ")[0];
+
+          return [
+            commodity,
+            system,
+            location.name,
+            location.type,
+            t.saturation,
+          ] as const;
+        })
+        .forEach(([commodity, system, location, locationType, saturation]) => {
+          this.labels(commodity, system, location, locationType).set(
+            saturation
+          );
+        });
+    },
+  });
+
+  metrics.push(
+    commodityTotalBuyPriceMetric,
+    commodityTotalSellPriceMetric,
+    commodityTotalBuyQuantityMetric,
+    commodityTotalSellQuantityMetric,
+    commodityTotalBuySaturationMetric,
+    commodityTotalSellSaturationMetric
+  );
 
   return metrics;
 }
