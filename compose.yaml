@@ -3,7 +3,6 @@ services:
     build:
       context: .
     environment:
-      - API_TOKEN=${API_TOKEN}
       - BASE_URL=https://sc-trade.tools/api
       - HOST=0.0.0.0
       - PORT=9020
