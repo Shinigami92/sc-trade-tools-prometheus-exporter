@@ -6,8 +6,8 @@
 
 # Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
 
-ARG NODE_VERSION=22.11.0
-ARG PNPM_VERSION=9.15.2
+ARG NODE_VERSION=22.13
+ARG PNPM_VERSION=9.15.3
 
 ################################################################################
 # Use node image for base image for all stages.
